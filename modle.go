@@ -1,6 +1,4 @@
-package zabbix
-
-import ()
+package zapix
 
 var New bool
 

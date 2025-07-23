@@ -1,4 +1,4 @@
-package zabbix
+package zapix
 
 const (
 	// SelectExtendedOutput may be given as a SelectQuery in search parameters

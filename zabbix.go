@@ -1,4 +1,4 @@
-package zabbix
+package zapix
 
 import (
 	"fmt"

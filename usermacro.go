@@ -1,4 +1,4 @@
-package zabbix
+package zapix
 
 // For `UsermacroObject` field: `Type`
 const (

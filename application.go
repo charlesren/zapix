@@ -1,4 +1,4 @@
-package zabbix
+package zapix
 
 // see: https://www.zabbix.com/documentation/5.0/en/manual/api/reference/application/object
 type ApplicationObject struct {
