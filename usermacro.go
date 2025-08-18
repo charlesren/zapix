@@ -16,7 +16,7 @@ const (
 type UsermacroObject struct {
 
 	// Gobal macro fields only
-	GlobalmacroID string `json:"globalmacroid,string,omitempty"`
+	GlobalmacroID string `json:"globalmacroid,omitempty"`
 
 	// Host macro fields only
 	HostmacroID string `json:"hostmacroid,omitempty"`
