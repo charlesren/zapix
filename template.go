@@ -45,13 +45,13 @@ type TemplateTagObject struct {
 type TemplateGetParams struct {
 	GetParameters
 
-	TemplateIDs       []int `json:"templateids,omitempty"`
-	GroupIDs          []int `json:"groupids,omitempty"`
-	ParentTemplateIDs []int `json:"parentTemplateids,omitempty"`
-	HostIDs           []int `json:"hostids,omitempty"`
-	GraphIDs          []int `json:"graphids,omitempty"`
-	ItemIDs           []int `json:"itemids,omitempty"`
-	TriggerIDs        []int `json:"triggerids,omitempty"`
+	TemplateIDs       []string `json:"templateids,omitempty"`
+	GroupIDs          []int    `json:"groupids,omitempty"`
+	ParentTemplateIDs []int    `json:"parentTemplateids,omitempty"`
+	HostIDs           []int    `json:"hostids,omitempty"`
+	GraphIDs          []int    `json:"graphids,omitempty"`
+	ItemIDs           []int    `json:"itemids,omitempty"`
+	TriggerIDs        []int    `json:"triggerids,omitempty"`
 
 	WithItems     bool                `json:"with_items,omitempty"`
 	WithTriggers  bool                `json:"with_triggers,omitempty"`
