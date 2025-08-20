@@ -69,3 +69,42 @@ func (cp *ConnectionPool) Put(conn net.Conn) {
 		conn.Close()
 	}
 }
+
+// GetStats 获取连接池统计信息
+func (cp *ConnectionPool) GetStats() map[string]interface{} {
+	cp.mutex.Lock()
+	defer cp.mutex.Unlock()
+
+	activeConnections := 0
+	for _, conn := range cp.pool {
+		if conn != nil {
+			activeConnections++
+		}
+	}
+
+	return map[string]interface{}{
+		"pool_size":           cp.poolSize,
+		"active_connections":  activeConnections,
+		"available_capacity":  cp.poolSize - len(cp.pool),
+		"current_pool_length": len(cp.pool),
+	}
+}
+
+// GetActiveConnectionCount 获取当前活跃连接数量
+func (cp *ConnectionPool) GetActiveConnectionCount() int {
+	cp.mutex.Lock()
+	defer cp.mutex.Unlock()
+
+	count := 0
+	for _, conn := range cp.pool {
+		if conn != nil {
+			count++
+		}
+	}
+	return count
+}
+
+// GetPoolSize 获取连接池大小
+func (cp *ConnectionPool) GetPoolSize() int {
+	return cp.poolSize
+}

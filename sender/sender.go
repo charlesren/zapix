@@ -177,6 +177,32 @@ func NewSender(addr string, connectTimeout, readTimeout, writeTimeout time.Durat
 	}
 }
 
+// GetPoolStats 获取连接池统计信息
+func (s *Sender) GetPoolStats() map[string]interface{} {
+	if s.Pool == nil {
+		return map[string]interface{}{
+			"error": "connection pool not initialized",
+		}
+	}
+	return s.Pool.GetStats()
+}
+
+// GetActiveConnectionCount 获取当前活跃连接数量
+func (s *Sender) GetActiveConnectionCount() int {
+	if s.Pool == nil {
+		return 0
+	}
+	return s.Pool.GetActiveConnectionCount()
+}
+
+// GetPoolSize 获取连接池大小
+func (s *Sender) GetPoolSize() int {
+	if s.Pool == nil {
+		return 0
+	}
+	return s.Pool.GetPoolSize()
+}
+
 // NewSenderTimeout return a sender object to send metrics defining values for timeouts.
 // Server could be a hostname or ip address with, optional, port. Same format as https://pkg.go.dev/net#Dial.
 func NewSenderTimeout(
