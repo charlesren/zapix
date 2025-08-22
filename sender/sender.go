@@ -15,6 +15,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/charlesren/ylog"
 )
 
 var (
@@ -317,6 +319,7 @@ func (s *Sender) Send(packet *Packet) (res Response, err error) {
 
 		// Read response from server
 		response, err := s.read(conn)
+		ylog.Debugf("sender", "response: %s", string(response))
 		if err != nil {
 			fmt.Printf("reading the response (timeout=%v): %s", s.ReadTimeout, err)
 			conn.Close()
