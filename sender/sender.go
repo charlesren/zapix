@@ -158,6 +158,7 @@ type Sender struct {
 	Pool           *ConnectionPool // 新增连接池
 	MaxRetries     int             // 最大重试次数
 	PoolSize       int             // 连接池大小
+
 }
 
 // NewSender return a sender object to send metrics using default values for timeouts.
@@ -184,6 +185,7 @@ func (s *Sender) GetPoolStats() map[string]interface{} {
 			"error": "connection pool not initialized",
 		}
 	}
+
 	return s.Pool.GetStats()
 }
 
@@ -257,6 +259,8 @@ func (s *Sender) SendMetrics(metrics []*Metric) (resActive Response, resTrapper 
 		resTrapper, errTrapper = s.Send(packetTrapper)
 		if errTrapper != nil {
 			errTrapper = fmt.Errorf("%w: %w", ErrTrapper, errTrapper)
+		} else if resTrapper.Response != "success" {
+			errTrapper = fmt.Errorf("%w: server returned %s - %s", ErrTrapper, resTrapper.Response, resTrapper.Info)
 		}
 	}
 
@@ -265,6 +269,8 @@ func (s *Sender) SendMetrics(metrics []*Metric) (resActive Response, resTrapper 
 		resActive, errActive = s.Send(packetActive)
 		if errActive != nil {
 			errActive = fmt.Errorf("%w: %w", ErrActive, errActive)
+		} else if resActive.Response != "success" {
+			errActive = fmt.Errorf("%w: server returned %s - %s", ErrActive, resActive.Response, resActive.Info)
 		}
 	}
 
@@ -302,6 +308,7 @@ func (s *Sender) Send(packet *Packet) (res Response, err error) {
 		if err != nil {
 			fmt.Printf("sending the data (timeout=%v): %s", s.WriteTimeout, err)
 			conn.Close()
+
 			continue
 		}
 
@@ -313,12 +320,14 @@ func (s *Sender) Send(packet *Packet) (res Response, err error) {
 		if err != nil {
 			fmt.Printf("reading the response (timeout=%v): %s", s.ReadTimeout, err)
 			conn.Close()
+
 			continue
 		}
 
 		if len(response) < 14 {
 			fmt.Printf("invalid response length: %s", response)
 			conn.Close()
+
 			continue
 		}
 		header := response[:5]
@@ -327,17 +336,27 @@ func (s *Sender) Send(packet *Packet) (res Response, err error) {
 		if !bytes.Equal(header, s.getHeader()) {
 			fmt.Printf("got no valid header [%+v] , expected [%+v]", header, s.getHeader())
 			conn.Close()
+
 			continue
 		}
 
 		if err := json.Unmarshal(data, &res); err != nil {
 			fmt.Printf("error: %s", ErrInvalidResponse)
 			conn.Close()
+
 			continue
+		}
+
+		// 检查响应是否成功
+		if res.Response != "success" {
+			fmt.Printf("zabbix server returned failure response: %s, info: %s", res.Response, res.Info)
+			conn.Close()
+			return res, fmt.Errorf("zabbix server returned failure: %s - %s", res.Response, res.Info)
 		}
 
 		// 成功，归还连接
 		s.Pool.Put(conn)
+
 		return res, nil
 	}
 

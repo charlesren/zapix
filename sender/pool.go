@@ -84,7 +84,9 @@ func (cp *ConnectionPool) GetStats() map[string]interface{} {
 
 	return map[string]interface{}{
 		"pool_size":           cp.poolSize,
-		"active_connections":  activeConnections,
+		"idle_connections":    activeConnections, // 池中空闲的有效连接数
+		"active_connections":  activeConnections, // 为了兼容性保持相同值
+		"total_connections":   activeConnections, // 总有效连接数
 		"available_capacity":  cp.poolSize - len(cp.pool),
 		"current_pool_length": len(cp.pool),
 	}
